@@ -1,0 +1,90 @@
+<html>
+  <head><title> Mind Your Mouse </title>
+    <script src="jquery-3.2.1.js"></script>
+  </head>
+  <body>
+    <canvas id= "myCanvas" width = '1355px' height = '600px' style="height : 97vh; width : 99vw;position : absolute;background:black; "></canvas>
+    <div id = "Score" style="padding : 10px; color : #0095DD;font-size :30px; font-weight : bold; font-family : Comic Sans MS; position : relative; background : #cccccc; text-align : center; left : 500px; top : 300px; width : 280px; height : 50px" hidden >
+      </div>
+  </body>
+  <script>
+  var canvas = document.getElementById('myCanvas');
+  var ctx = canvas.getContext('2d');
+  var start_time = Date.now();
+  console.log(start_time);
+  var ballRadius = 10;
+  var ballColor = "#0095DD";
+  var balls = [];
+  var ballCount = 50;
+  var currentBalls = 5;
+  var mouseX;
+  var mouseY;
+  var iter = 0;
+  document.getElementById('myCanvas').style.cursor = "crosshair";
+  for (var i = 0; i < ballCount; i++)
+      balls[i] = {x :  Math.random() + 7, y :  Math.random() +  7, dx : Math.random() + 2, dy :Math.random()+ 2, color : getRandomColor()};
+
+  document.addEventListener('mousemove',mousePosition,false);
+  function mousePosition(event){
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+  }
+  function draw(){
+    iter++;
+
+     if(iter % 500 == 0 && currentBalls <= ballCount){
+      console.log("Here is a new buddy");
+      currentBalls++;
+      console.log(currentBalls);
+    }
+    for(var i = 0; i < currentBalls; i++){
+        var a = balls[i].x;
+        var b = balls[i].y;
+        if(Math.pow(mouseX - a,2) + Math.pow(mouseY - b,2) - Math.pow(ballRadius,2) <= 0){
+          $('#myCanvas').hide(500);
+          var score = Date.now() - start_time;
+          score = Math.round(currentBalls*(score/10000));
+          $('#Score').text("Score is :  " + score);
+          $('#Score').show(500);
+          console.log("GO");
+        }
+    }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawBall();
+    for(var i = 0; i < currentBalls; i++){
+        balls[i].x += balls[i].dx;
+        balls[i].y += balls[i].dy;
+
+        //Botton and Top collision
+        if(balls[i].y+balls[i].dy > canvas.height-ballRadius || balls[i].y + balls[i].dy - ballRadius< 0) {
+            balls[i].dy =- balls[i].dy;
+            balls[i].color = getRandomColor();
+            ctx.fillStyle = balls[i].color;
+        }
+        //Left and Right collision
+        if (balls[i].x + balls[i].dx - ballRadius <= 0 || balls[i].x + balls[i].dx + ballRadius >= canvas.width){
+            balls[i].dx =- balls[i].dx;
+            balls[i].color = getRandomColor();
+            ctx.fillStyle = balls[i].color;
+        }
+    }
+}
+  function drawBall(){
+    for(var i = 0 ; i < currentBalls; i++){
+        ctx.beginPath();
+        ctx.arc(balls[i].x,balls[i].y,10,0,Math.PI*2);
+        ctx.fillStyle = balls[i].color;
+        ctx.fill();
+        ctx.closePath();
+        }
+  }
+  setInterval(draw,10);
+  function getRandomColor() {
+			var letters = '0123456789ABCDEF';
+			var color = '#';
+			for (var i = 0; i < 6; i++ )
+				color += letters[Math.floor(Math.random() * 16)];
+			return color;
+  }
+  </script>
+</html>
