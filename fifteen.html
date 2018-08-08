@@ -1,0 +1,112 @@
+<html>
+	<head>
+		<title> Fifteen </title>
+		<style>
+			table{
+				border : 2px solid black;
+				color : blue;
+				background: yellow;
+			}
+			td{
+				font-size: 50px;
+				border : 2px solid red;
+				padding : 10px;
+				text-align: center;
+			}
+		</style>
+
+	</head>
+	<body>
+		<div style = "margin-top : 180px;" align="center">
+			<table id = "fifteen">
+				<script>
+					var check = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+					var fill_up = [];
+					for(var i = 0; i < 15; i++){//Filling up the fill_up
+						var num = Math.floor(Math.random()*15) + 1;//Picking up random number from 1 to 15
+						if(check[num] == 0){//If the number is not in fill_up
+							fill_up.push(num);
+							check[num] = 1;
+						}
+						else{//If the number is in fill_up
+							while(check[num])	{
+								num++;
+								num %= 16;//Wrapping around
+								if(!num)
+									num++;
+							}
+							fill_up.push(num);
+							check[num] = 1;
+						}
+					}
+					console.log(fill_up);
+
+					//Now copy the fill_up onto the table
+					var k = 0;
+					var code;
+					for(var i = 0; i < 4; i++){
+						document.write("<tr>");
+						for(var j = 0; j < 4; j++){
+							code = "<td>";
+							if(k != 15)
+								code += fill_up[k++] + "</td>";
+									//document.write("<td>" + fill_up[k++] + "</td>");
+							else
+								code += "__</td>";
+								//document.write("<td> __</td");
+							document.write(code);
+						}
+						document.write("</tr>");
+				  }
+					</script>
+			</table>
+		</div>
+		<script>
+			document.addEventListener("keypress", key_event);
+			var fifteen;
+			fifteen = document.getElementsByTagName('td');
+			for(var _pos = 0; _pos < 16; _pos++)
+				if(fifteen[_pos].textContent == "__"){
+					console.log("Found at : " + _pos);
+					break;
+				}
+			function key_event(event){
+				console.log(event);
+				switch(event.keyCode){
+					case 37 :	if(_pos%4){//If not on left boundary => Can go further left
+											var temp = fifteen[_pos-1].textContent;
+											fifteen[_pos-1].textContent = "__";
+											fifteen[_pos].textContent = temp;
+											_pos--;//Updating _pos
+											}
+										break;
+					case 38 : if(_pos > 3){//If not on the upper boundary
+											var temp = fifteen[_pos - 4].textContent;
+											fifteen[_pos - 4].textContent = "__";
+											fifteen[_pos].textContent = temp;
+											_pos = _pos - 4;//Updating _pos
+										}
+										break;
+					case 39 : if(_pos%4 != 3){//If not on the right boundary
+											var temp = fifteen[_pos + 1].textContent;
+											fifteen[_pos + 1].textContent = "__";
+											fifteen[_pos].textContent = temp;
+											_pos++;//Updating _pos
+										}
+										break;
+					case 40 : if(_pos < 12){//If not on the bottom boundary
+										var temp = fifteen[_pos + 4].textContent;
+										fifteen[_pos + 4].textContent = "__";
+										fifteen[_pos].textContent = temp;
+										_pos = _pos + 4;
+										}
+										break;
+
+					default : console.log("Wrong Key Bruv!!");
+				}
+				console.log(fifteen);
+			}
+		</script>
+
+	</body>
+</html>
